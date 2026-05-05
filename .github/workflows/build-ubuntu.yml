@@ -28,7 +28,7 @@ env:
   PUSH_GHCR: ${{ github.repository == (github.event.pull_request.head.repo.full_name || github.repository) && '1' || '' }}
   # PUSH_QUAY: ${{ secrets.QUAY_USER && secrets.QUAY_TOKEN && '1' || '' }}
   PUSH_DOCKER_HUB: ${{ secrets.DOCKER_USER && secrets.DOCKER_TOKEN && '1' || '' }}
-  LATEST_TAG: 24.04
+  LATEST_TAG: 26.04
 
 defaults:
   run:
@@ -48,9 +48,9 @@ jobs:
         PLATFORMS:
           - linux/amd64,linux/arm64,linux/arm/v7
         TAG:
+          - 26.04
           - 24.04
           - 22.04
-          - 20.04
     steps:
       - name: Disable apparmor restrictions
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
@@ -108,11 +108,7 @@ jobs:
 
       - name: Set Ubuntu version to RELEASE
         run: |
-          if [ "$LATEST_TAG" = "${{ matrix.TAG }}" ]; then
-            echo "RELEASE_TAG=$(lsb_release -rs)" | tee -a "$GITHUB_ENV"
-          else
-            echo "RELEASE_TAG=${{ matrix.TAG }}" | tee -a "$GITHUB_ENV"
-          fi
+          echo "RELEASE_TAG=${{ matrix.TAG }}" | tee -a "$GITHUB_ENV"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -239,9 +235,9 @@ jobs:
       max-parallel: 8
       matrix:
         TAG:
+          - 26.04
           - 24.04
           - 22.04
-          - 20.04
         TYPE:
           - go
           - js
@@ -268,9 +264,6 @@ jobs:
             TYPE: gh
           - PLATFORMS: linux/amd64,linux/arm64
             TYPE: custom
-        exclude:
-          - TAG: 20.04
-            TYPE: go
     steps:
       - name: Disable apparmor restrictions
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
@@ -335,11 +328,7 @@ jobs:
 
       - name: Set Ubuntu version to RELEASE
         run: |
-          if [ "$LATEST_TAG" = "${{ matrix.TAG }}" ]; then
-            echo "RELEASE_TAG=$(lsb_release -rs)" | tee -a "$GITHUB_ENV"
-          else
-            echo "RELEASE_TAG=${{ matrix.TAG }}" | tee -a "$GITHUB_ENV"
-          fi
+          echo "RELEASE_TAG=${{ matrix.TAG }}" | tee -a "$GITHUB_ENV"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
